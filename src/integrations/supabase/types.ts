@@ -9,7 +9,99 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      levels: {
+        Row: {
+          description: string | null
+          id: number
+          max_points: number
+          name: string
+        }
+        Insert: {
+          description?: string | null
+          id?: number
+          max_points: number
+          name: string
+        }
+        Update: {
+          description?: string | null
+          id?: number
+          max_points?: number
+          name?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          id: string
+          updated_at: string
+          username: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          id: string
+          updated_at?: string
+          username?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          id?: string
+          updated_at?: string
+          username?: string | null
+        }
+        Relationships: []
+      }
+      user_progress: {
+        Row: {
+          attempts: number | null
+          completed: boolean | null
+          created_at: string
+          id: string
+          level_id: number
+          score: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          attempts?: number | null
+          completed?: boolean | null
+          created_at?: string
+          id?: string
+          level_id: number
+          score?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          attempts?: number | null
+          completed?: boolean | null
+          created_at?: string
+          id?: string
+          level_id?: number
+          score?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_progress_level_id_fkey"
+            columns: ["level_id"]
+            isOneToOne: false
+            referencedRelation: "levels"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_progress_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

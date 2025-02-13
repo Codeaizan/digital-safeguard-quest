@@ -1,6 +1,7 @@
 
 import { ArrowRight, ShieldCheck, Lock, Bug, AlertTriangle } from "lucide-react";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 const features = [
   {
@@ -30,6 +31,8 @@ const features = [
 ];
 
 const Index = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="min-h-screen matrix-bg">
       <main className="container mx-auto px-4 py-16">
@@ -50,7 +53,10 @@ const Index = () => {
               Embark on a journey through our gamified cybersecurity challenges.
               Learn real-world skills while having fun.
             </p>
-            <button className="bg-matrix text-deepBlack font-bold px-8 py-3 rounded-lg hover:bg-matrix/90 transition-all duration-300 inline-flex items-center gap-2 glow-effect">
+            <button 
+              onClick={() => navigate("/auth")}
+              className="bg-matrix text-deepBlack font-bold px-8 py-3 rounded-lg hover:bg-matrix/90 transition-all duration-300 inline-flex items-center gap-2 glow-effect"
+            >
               Start Training <ArrowRight size={20} />
             </button>
           </motion.div>
