@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -28,7 +27,6 @@ export default function PasswordMaster() {
   };
 
   const checkPasswordStrength = (pass: string) => {
-    let score = 0;
     const checks = {
       length: pass.length >= 8,
       number: /\d/.test(pass),
@@ -37,8 +35,8 @@ export default function PasswordMaster() {
       special: /[!@#$%^&*(),.?":{}|<>]/.test(pass),
     };
 
-    score = Object.values(checks).filter(Boolean).length;
-    return Math.min(Math.floor(score / 2), 3);
+    const score = Object.values(checks).filter(Boolean).length;
+    return score === 5 ? 3 : Math.floor(score / 2);
   };
 
   const updateProgress = async (score: number) => {
@@ -76,9 +74,10 @@ export default function PasswordMaster() {
     if (strength < 3) {
       toast({
         title: "Password not strong enough",
-        description: "Please make your password stronger by adding more variety",
+        description: "Please ensure your password meets all requirements",
         variant: "destructive",
       });
+      setAttempts(prev => prev + 1);
       return;
     }
 

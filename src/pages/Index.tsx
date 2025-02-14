@@ -1,7 +1,8 @@
-
 import { ArrowRight, ShieldCheck, Lock, Bug, AlertTriangle } from "lucide-react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 const features = [
   {
@@ -32,10 +33,38 @@ const features = [
 
 const Index = () => {
   const navigate = useNavigate();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    checkUser();
+  }, []);
+
+  const checkUser = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    setIsAuthenticated(!!session);
+  };
+
+  const handleFeatureClick = (levelId: number) => {
+    if (isAuthenticated) {
+      navigate(`/level/${levelId}`);
+    } else {
+      navigate("/auth");
+    }
+  };
 
   return (
     <div className="min-h-screen matrix-bg">
       <main className="container mx-auto px-4 py-16">
+        <div className="absolute top-4 right-4">
+          <Button 
+            variant="outline" 
+            onClick={() => navigate(isAuthenticated ? "/dashboard" : "/auth")}
+            className="text-white"
+          >
+            {isAuthenticated ? "Dashboard" : "Login"}
+          </Button>
+        </div>
+
         <section className="text-center mb-16">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -69,7 +98,8 @@ const Index = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="p-6 rounded-xl bg-deepBlack/50 border border-matrix/10 card-hover backdrop-blur-sm"
+              className="p-6 rounded-xl bg-deepBlack/50 border border-matrix/10 card-hover backdrop-blur-sm cursor-pointer"
+              onClick={() => handleFeatureClick(index + 1)}
             >
               <feature.icon className={`w-12 h-12 ${feature.color} mb-4`} />
               <h3 className="text-xl font-cyber font-bold mb-2 text-lightGrey">
