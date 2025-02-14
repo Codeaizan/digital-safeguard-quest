@@ -1,69 +1,104 @@
-# Welcome to your Lovable project
+# CyberShield: A Web-Based Cybersecurity Educational Game
 
-## Project info
+## Overview
+CyberShield is an interactive web-based educational game designed to teach players about digital safety through engaging storytelling and mini-games. The game covers various cybersecurity threats, including phishing, malware, social engineering, and ransomware, through progressive levels.
 
-**URL**: https://lovable.dev/projects/3c746779-af79-4bdb-af35-2b711f9ce220
+## Features
+- **Story Mode**: Progressive levels covering different cybersecurity threats.
+- **Interactive Mini-Games**: Engaging challenges such as "Phishing Frenzy" and "Password Protector" to test and enhance players' cybersecurity skills.
+- **User Authentication**: Login, signup, and password recovery using Supabase.
+- **Dashboard**: Users can edit their details, track progress, and start game levels.
+- **Dark Cyber Theme**: Aesthetic inspired by platforms like HackTheBox and TryHackMe, with neon cyberpunk design elements.
 
-## How can I edit this code?
+## Tech Stack
+- **Frontend**: React.js
+- **Backend**: Supabase (Authentication & Database)
+- **Styling**: CSS (Separate CSS files for each page)
+- **Deployment**: Vercel/Netlify
 
-There are several ways of editing your application.
+## Levels & Challenges
+1. **Password Strength Checker**
+   - Users create a strong password with real-time strength suggestions.
+   - The password must meet 8 constraints, including a digit, character, and special character.
+   - Points: 10 for the first attempt, decreasing with retries.
 
-**Use Lovable**
+2. **Phishing Email Detection**
+   - Users analyze 10 emails to determine phishing attempts.
+   - Points are awarded based on correct identifications.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/3c746779-af79-4bdb-af35-2b711f9ce220) and start prompting.
+3. **Malware File Identification**
+   - Users analyze 10 files and identify malicious ones based on behavior, process usage, origin, and permissions.
+   - Full marks for correct selections.
 
-Changes made via Lovable will be committed automatically to this repo.
+4. **Morse Code Challenge**
+   - Users send a message in Morse code following a given hint.
+   - Points decrease with retries.
 
-**Use your preferred IDE**
+5. **Social Engineering Quiz**
+   - 10 randomized questions to test awareness of personal information security.
+   - Points are awarded for correct answers.
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## Installation & Setup
+1. Clone the repository:
+   ```sh
+   git clone https://github.com/your-repo/cybershield.git
+   cd cybershield
+   ```
+2. Install dependencies:
+   ```sh
+   npm install
+   ```
+3. Configure Supabase:
+   - Create a Supabase project.
+   - Obtain API credentials and add them to `.env`:
+     ```sh
+     REACT_APP_SUPABASE_URL=your_supabase_url
+     REACT_APP_SUPABASE_ANON_KEY=your_anon_key
+     ```
+4. Run the development server:
+   ```sh
+   npm start
+   ```
+5. Deploy the project:
+   ```sh
+   npm run build
+   ```
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+## Folder Structure
+```
+cybershield/
+│── public/
+│── src/
+│   ├── components/    # React components
+│   ├── pages/         # Different game levels
+│   ├── styles/        # CSS files
+│   ├── utils/         # Helper functions
+│   ├── App.js         # Main entry point
+│── .env               # Supabase credentials
+│── package.json       # Project dependencies
+│── README.md          # Project documentation
 ```
 
-**Edit a file directly in GitHub**
+## Known Issues & Fixes
+- **IncidentResponse Component Error**:
+  - Ensure the file exists in `src/pages/IncidentResponse.js`.
+  - Import the file correctly in `App.js`.
+  
+- **RansomwareRescue Component Error**:
+  - Ensure the `handleOptionSelect` function is fully implemented and closed.
+  - Check for missing return statements.
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## Future Enhancements
+- Additional cybersecurity challenges.
+- Leaderboard system.
+- Multiplayer mode.
 
-**Use GitHub Codespaces**
+## Contributors
+- Faizanur Rahman
+- Faizan Khan
+- Mohammad Kaab
+- Rohan Srivastava
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## License
+MIT License
 
-## What technologies are used for this project?
-
-This project is built with .
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/3c746779-af79-4bdb-af35-2b711f9ce220) and click on Share -> Publish.
-
-## I want to use a custom domain - is that possible?
-
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
