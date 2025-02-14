@@ -1,9 +1,11 @@
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { Trophy, Medal, RefreshCw } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
 
 interface Level {
   id: number;
@@ -32,6 +34,7 @@ export default function Dashboard() {
   const [progress, setProgress] = useState<UserProgress[]>([]);
   const [showLeaderboard, setShowLeaderboard] = useState(false);
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
+  const { toast } = useToast();
 
   useEffect(() => {
     checkUser();
