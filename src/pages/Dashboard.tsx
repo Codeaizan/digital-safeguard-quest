@@ -75,9 +75,9 @@ export default function Dashboard() {
   };
 
   const fetchLeaderboard = async () => {
-    const { data: leaderboardData, error } = await supabase
-      .from('leaderboard_view')
-      .select('*')
+    const { data, error } = await supabase
+      .from('leaderboard')
+      .select('username, avatar_url, user_id, total_score, levels_completed')
       .order('total_score', { ascending: false })
       .limit(10);
     
@@ -86,8 +86,16 @@ export default function Dashboard() {
       return;
     }
     
-    if (leaderboardData) {
-      setLeaderboard(leaderboardData as LeaderboardEntry[]);
+    if (data) {
+      // Explicitly type the data as LeaderboardEntry[]
+      const typedData: LeaderboardEntry[] = data.map(entry => ({
+        username: entry.username,
+        avatar_url: entry.avatar_url,
+        user_id: entry.user_id,
+        total_score: Number(entry.total_score),
+        levels_completed: Number(entry.levels_completed)
+      }));
+      setLeaderboard(typedData);
     }
   };
 
