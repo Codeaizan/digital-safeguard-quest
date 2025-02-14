@@ -1,10 +1,9 @@
-
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
-import { Trophy, Medal } from "lucide-react";
+import { Trophy, Medal, RefreshCw } from "lucide-react";
 
 interface Level {
   id: number;
@@ -87,7 +86,6 @@ export default function Dashboard() {
     }
     
     if (data) {
-      // Explicitly type the data as LeaderboardEntry[]
       const typedData: LeaderboardEntry[] = data.map(entry => ({
         username: entry.username,
         avatar_url: entry.avatar_url,
@@ -115,6 +113,36 @@ export default function Dashboard() {
     return progress.reduce((total, p) => total + (p.score || 0), 0);
   };
 
+  const handleResetScores = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return;
+
+    const { error } = await supabase
+      .from("user_progress")
+      .delete()
+      .eq('user_id', session.user.id);
+
+    if (error) {
+      console.error("Error resetting scores:", error);
+      toast({
+        title: "Error",
+        description: "Failed to reset scores. Please try again.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    toast({
+      title: "Success",
+      description: "All your scores have been reset!",
+    });
+
+    fetchProgress();
+    if (showLeaderboard) {
+      fetchLeaderboard();
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-900 text-white p-8">
       <div className="max-w-4xl mx-auto">
@@ -124,6 +152,10 @@ export default function Dashboard() {
             <Button onClick={toggleLeaderboard} variant="outline" className="hover:bg-matrix/20">
               <Trophy className="w-4 h-4 mr-2" />
               Leaderboard
+            </Button>
+            <Button onClick={handleResetScores} variant="outline" className="hover:bg-yellow-500/20">
+              <RefreshCw className="w-4 h-4 mr-2" />
+              Reset Scores
             </Button>
             <Button onClick={handleLogout} variant="outline" className="hover:bg-red-500/20">
               Logout

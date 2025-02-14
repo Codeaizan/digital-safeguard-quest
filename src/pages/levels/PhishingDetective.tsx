@@ -67,7 +67,7 @@ export default function PhishingDetective() {
     const correct = isPhishing === currentEmail.isPhishing;
     
     if (correct) {
-      setScore(score + 1);
+      setScore(prevScore => prevScore + 1);
       toast({
         title: "Correct!",
         description: "Good job identifying this email!",
@@ -81,14 +81,15 @@ export default function PhishingDetective() {
     }
 
     if (currentEmailIndex === emails.length - 1) {
-      await updateProgress();
+      const finalScore = correct ? score + 1 : score;
+      await updateProgress(finalScore);
       setCompleted(true);
     } else {
       setCurrentEmailIndex(currentEmailIndex + 1);
     }
   };
 
-  const updateProgress = async () => {
+  const updateProgress = async (finalScore: number) => {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) return;
 
@@ -97,8 +98,10 @@ export default function PhishingDetective() {
       .upsert({
         user_id: session.user.id,
         level_id: 2,
-        score,
+        score: finalScore,
         completed: true,
+      }, {
+        onConflict: 'user_id,level_id'
       });
 
     if (error) {
@@ -109,24 +112,24 @@ export default function PhishingDetective() {
   const currentEmail = emails[currentEmailIndex];
 
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
+    <div className="min-h-screen bg-gray-900 p-8">
       <div className="max-w-2xl mx-auto">
-        <Card>
+        <Card className="bg-gray-800 border-matrix/20">
           <CardHeader>
-            <CardTitle>Level 2: Phishing Detective</CardTitle>
+            <CardTitle className="text-matrix">Level 2: Phishing Detective</CardTitle>
           </CardHeader>
           <CardContent>
             {completed ? (
-              <div className="text-center space-y-4">
+              <div className="text-center space-y-4 text-white">
                 <h2 className="text-xl font-bold">Level Complete!</h2>
                 <p>You scored {score} out of {emails.length} points!</p>
-                <Button onClick={() => navigate("/dashboard")}>
+                <Button onClick={() => navigate("/dashboard")} className="bg-matrix/20 hover:bg-matrix/40 text-matrix">
                   Return to Dashboard
                 </Button>
               </div>
             ) : (
               <div className="space-y-6">
-                <div className="border rounded-lg p-4 space-y-2">
+                <div className="border rounded-lg p-4 space-y-2 bg-gray-700/50 text-white">
                   <p><strong>From:</strong> {currentEmail.from}</p>
                   <p><strong>Subject:</strong> {currentEmail.subject}</p>
                   <p><strong>Content:</strong></p>
@@ -142,13 +145,13 @@ export default function PhishingDetective() {
                   </Button>
                   <Button
                     variant="default"
-                    className="flex-1"
+                    className="flex-1 bg-green-600 hover:bg-green-700"
                     onClick={() => handleAnswer(false)}
                   >
                     Mark as Safe
                   </Button>
                 </div>
-                <p className="text-center text-sm text-gray-500">
+                <p className="text-center text-sm text-gray-400">
                   Email {currentEmailIndex + 1} of {emails.length}
                 </p>
               </div>

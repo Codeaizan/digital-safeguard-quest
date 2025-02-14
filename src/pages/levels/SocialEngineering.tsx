@@ -62,7 +62,7 @@ export default function SocialEngineering() {
     const isCorrect = answer === current.correctAnswer;
     
     if (isCorrect) {
-      setScore(score + 1);
+      setScore(prevScore => prevScore + 1);
       toast({
         title: "Correct!",
         description: current.explanation,
@@ -75,7 +75,8 @@ export default function SocialEngineering() {
       });
     }
 
-    if (currentScenario === scenarios.length - 1) {
+    const isLastScenario = currentScenario === scenarios.length - 1;
+    if (isLastScenario) {
       const finalScore = score + (isCorrect ? 1 : 0);
       
       const { data: { session } } = await supabase.auth.getSession();
@@ -88,6 +89,8 @@ export default function SocialEngineering() {
           level_id: 5,
           score: finalScore,
           completed: true,
+        }, {
+          onConflict: 'user_id,level_id'
         });
 
       if (error) {
@@ -102,33 +105,33 @@ export default function SocialEngineering() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
+    <div className="min-h-screen bg-gray-900 p-8">
       <div className="max-w-2xl mx-auto">
-        <Card>
+        <Card className="bg-gray-800 border-matrix/20">
           <CardHeader>
-            <CardTitle>Level 5: Social Engineering Defense</CardTitle>
+            <CardTitle className="text-matrix">Level 5: Social Engineering Defense</CardTitle>
           </CardHeader>
           <CardContent>
             {completed ? (
-              <div className="text-center space-y-4">
+              <div className="text-center space-y-4 text-white">
                 <h2 className="text-xl font-bold">Level Complete!</h2>
                 <p>You scored {score} out of {scenarios.length} points!</p>
-                <Button onClick={() => navigate("/dashboard")}>
+                <Button onClick={() => navigate("/dashboard")} className="bg-matrix/20 hover:bg-matrix/40 text-matrix">
                   Return to Dashboard
                 </Button>
               </div>
             ) : (
               <div className="space-y-6">
                 <div className="text-center">
-                  <p className="text-lg font-semibold mb-2">
+                  <p className="text-lg font-semibold mb-2 text-gray-300">
                     Scenario {currentScenario + 1} of {scenarios.length}
                   </p>
-                  <p className="text-xl mb-8">{scenarios[currentScenario].question}</p>
+                  <p className="text-xl mb-8 text-white">{scenarios[currentScenario].question}</p>
                 </div>
                 <div className="flex gap-4">
                   <Button
                     variant="default"
-                    className="flex-1"
+                    className="flex-1 bg-green-600 hover:bg-green-700"
                     onClick={() => handleAnswer(true)}
                   >
                     Yes, Share
