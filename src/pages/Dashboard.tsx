@@ -135,12 +135,15 @@ export default function Dashboard() {
       return;
     }
 
+    // Clear progress from state after successful delete
+    setProgress([]);
+    
     toast({
       title: "Success",
       description: "All your scores have been reset!",
     });
 
-    fetchProgress();
+    // Refresh leaderboard if it's showing
     if (showLeaderboard) {
       fetchLeaderboard();
     }
