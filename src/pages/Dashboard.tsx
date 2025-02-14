@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -20,10 +19,11 @@ interface UserProgress {
 }
 
 interface LeaderboardEntry {
-  username: string;
+  username: string | null;
   avatar_url: string | null;
   total_score: number;
   levels_completed: number;
+  user_id: string;
 }
 
 export default function Dashboard() {
@@ -75,8 +75,7 @@ export default function Dashboard() {
 
   const fetchLeaderboard = async () => {
     const { data, error } = await supabase
-      .from("leaderboard")
-      .select("*")
+      .rpc('get_leaderboard')
       .limit(10);
     
     if (error) {
@@ -84,7 +83,9 @@ export default function Dashboard() {
       return;
     }
     
-    setLeaderboard(data);
+    if (data) {
+      setLeaderboard(data as LeaderboardEntry[]);
+    }
   };
 
   const handleLogout = async () => {

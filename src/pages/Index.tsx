@@ -1,8 +1,10 @@
+
 import { ArrowRight, ShieldCheck, Lock, Bug, AlertTriangle } from "lucide-react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
 
 const features = [
   {
