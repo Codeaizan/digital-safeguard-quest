@@ -41,8 +41,8 @@ CyberShield is an interactive web-based educational game designed to teach playe
 ## Installation & Setup
 1. Clone the repository:
    ```sh
-   git clone https://github.com/your-repo/cybershield.git
-   cd cybershield
+   https://github.com/Codeaizan/digital-safeguard-quest.git
+   cd digital-safeguard-quest
    ```
 2. Install dependencies:
    ```sh
