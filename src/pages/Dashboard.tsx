@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -74,8 +75,10 @@ export default function Dashboard() {
   };
 
   const fetchLeaderboard = async () => {
-    const { data, error } = await supabase
-      .rpc('get_leaderboard')
+    const { data: leaderboardData, error } = await supabase
+      .from('leaderboard_view')
+      .select('*')
+      .order('total_score', { ascending: false })
       .limit(10);
     
     if (error) {
@@ -83,8 +86,8 @@ export default function Dashboard() {
       return;
     }
     
-    if (data) {
-      setLeaderboard(data as LeaderboardEntry[]);
+    if (leaderboardData) {
+      setLeaderboard(leaderboardData as LeaderboardEntry[]);
     }
   };
 
@@ -101,36 +104,36 @@ export default function Dashboard() {
   };
 
   const getTotalScore = () => {
-    return progress.reduce((total, p) => total + p.score, 0);
+    return progress.reduce((total, p) => total + (p.score || 0), 0);
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
+    <div className="min-h-screen bg-gray-900 text-white p-8">
       <div className="max-w-4xl mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold">Cybersecurity Training</h1>
+          <h1 className="text-3xl font-bold text-matrix">Cybersecurity Training</h1>
           <div className="space-x-4">
-            <Button onClick={toggleLeaderboard} variant="outline">
+            <Button onClick={toggleLeaderboard} variant="outline" className="hover:bg-matrix/20">
               <Trophy className="w-4 h-4 mr-2" />
               Leaderboard
             </Button>
-            <Button onClick={handleLogout} variant="outline">
+            <Button onClick={handleLogout} variant="outline" className="hover:bg-red-500/20">
               Logout
             </Button>
           </div>
         </div>
 
         {showLeaderboard ? (
-          <Card className="mb-8">
+          <Card className="bg-gray-800 border-matrix/20">
             <CardHeader>
-              <CardTitle>Top Players</CardTitle>
+              <CardTitle className="text-matrix">Top Players</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 {leaderboard.map((entry, index) => (
                   <div
                     key={index}
-                    className="flex items-center justify-between p-4 bg-white rounded-lg shadow"
+                    className="flex items-center justify-between p-4 bg-gray-700/50 rounded-lg backdrop-blur-sm"
                   >
                     <div className="flex items-center space-x-4">
                       <span className="text-xl font-bold">
@@ -140,13 +143,13 @@ export default function Dashboard() {
                         {index > 2 && `#${index + 1}`}
                       </span>
                       <div>
-                        <p className="font-semibold">{entry.username || "Anonymous Player"}</p>
-                        <p className="text-sm text-gray-500">{entry.levels_completed} levels completed</p>
+                        <p className="font-semibold text-matrix">{entry.username || "Anonymous Player"}</p>
+                        <p className="text-sm text-gray-400">{entry.levels_completed} levels completed</p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-xl font-bold">{entry.total_score}</p>
-                      <p className="text-sm text-gray-500">points</p>
+                      <p className="text-xl font-bold text-matrix">{entry.total_score}</p>
+                      <p className="text-sm text-gray-400">points</p>
                     </div>
                   </div>
                 ))}
@@ -155,9 +158,9 @@ export default function Dashboard() {
           </Card>
         ) : (
           <>
-            <Card className="mb-8">
+            <Card className="mb-8 bg-gray-800 border-matrix/20">
               <CardHeader>
-                <CardTitle>Your Progress</CardTitle>
+                <CardTitle className="text-matrix">Your Progress</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-2xl font-semibold">Total Score: {getTotalScore()}</p>
@@ -168,18 +171,18 @@ export default function Dashboard() {
               {levels.map((level) => {
                 const levelProgress = progress.find(p => p.level_id === level.id);
                 return (
-                  <Card key={level.id}>
+                  <Card key={level.id} className="bg-gray-800 border-matrix/20 hover:border-matrix/50 transition-all">
                     <CardHeader>
-                      <CardTitle>{level.name}</CardTitle>
+                      <CardTitle className="text-matrix">{level.name}</CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <p className="mb-4">{level.description}</p>
-                      <p className="mb-4">
+                      <p className="mb-4 text-gray-300">{level.description}</p>
+                      <p className="mb-4 text-matrix">
                         Score: {levelProgress?.score || 0} / {level.max_points}
                       </p>
                       <Button
                         onClick={() => navigate(`/level/${level.id}`)}
-                        className="w-full"
+                        className="w-full bg-matrix/20 hover:bg-matrix/40 text-matrix"
                       >
                         {levelProgress?.completed ? "Retry Level" : "Start Level"}
                       </Button>
