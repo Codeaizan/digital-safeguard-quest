@@ -102,3 +102,126 @@ export default function RansomwareRescue() {
     setSelectedOptions(newSelectedOptions);
 
     if (selectedOption.correct) {
+      if (currentStep === steps.length - 1) {
+        // Calculate final score based on correct answers
+        const correctAnswers = newSelectedOptions.filter((optionId, index) => {
+          const stepOptions = steps[index].options;
+          const selected = stepOptions.find(opt => opt.id === optionId);
+          return selected?.correct;
+        }).length;
+
+        const finalScore = Math.floor((correctAnswers / steps.length) * 10);
+        setScore(finalScore);
+
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) return;
+
+        const { error } = await supabase
+          .from("user_progress")
+          .upsert({
+            user_id: session.user.id,
+            level_id: 9,
+            score: finalScore,
+            completed: true,
+          }, {
+            onConflict: 'user_id,level_id'
+          });
+
+        if (error) {
+          console.error("Error updating progress:", error);
+          toast({
+            title: "Error",
+            description: "Failed to save progress. Please try again.",
+            variant: "destructive"
+          });
+          return;
+        }
+
+        setCompleted(true);
+        toast({
+          title: "Level Complete!",
+          description: `You scored ${finalScore} points!`,
+        });
+      } else {
+        setCurrentStep(prev => prev + 1);
+        toast({
+          title: "Correct!",
+          description: "Moving to next step...",
+        });
+      }
+    } else {
+      toast({
+        title: "Incorrect",
+        description: "Try again!",
+        variant: "destructive",
+      });
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-900 p-8">
+      <div className="max-w-3xl mx-auto">
+        <Card className="bg-gray-800 border-matrix/20">
+          <CardHeader>
+            <CardTitle className="text-matrix flex items-center gap-2">
+              <Shield className="h-6 w-6" />
+              Level 9: Ransomware Rescue
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {completed ? (
+              <div className="text-center space-y-4 text-white">
+                <h2 className="text-xl font-bold">Level Complete!</h2>
+                <p>You scored {score} out of 10 points!</p>
+                <Button onClick={() => navigate("/dashboard")} className="bg-matrix/20 hover:bg-matrix/40 text-matrix">
+                  Return to Dashboard
+                </Button>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                <div className="space-y-2">
+                  <h2 className="text-xl font-bold text-matrix">
+                    {steps[currentStep].title}
+                  </h2>
+                  <p className="text-gray-300">
+                    {steps[currentStep].description}
+                  </p>
+                </div>
+
+                <RadioGroup
+                  onValueChange={handleOptionSelect}
+                  className="space-y-3"
+                >
+                  {steps[currentStep].options.map((option) => (
+                    <div
+                      key={option.id}
+                      className="flex items-center space-x-2 rounded-lg border border-gray-700 p-4 hover:bg-gray-700/50 transition-colors"
+                    >
+                      <RadioGroupItem
+                        value={option.id}
+                        id={option.id}
+                        className="border-matrix text-matrix"
+                      />
+                      <Label
+                        htmlFor={option.id}
+                        className="flex-1 cursor-pointer text-gray-300"
+                      >
+                        {option.text}
+                      </Label>
+                    </div>
+                  ))}
+                </RadioGroup>
+
+                <div className="flex justify-between items-center">
+                  <p className="text-sm text-gray-400">
+                    Step {currentStep + 1} of {steps.length}
+                  </p>
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}
